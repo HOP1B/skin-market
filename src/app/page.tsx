@@ -3,6 +3,7 @@
 import { MainLayout } from "./common/MainLayout";
 import React from "react";
 import SkinCard from "./components/skin-card";
+import ItemDetails from "./components/itemDetail";
 
 const App: React.FC = () => {
   return (
@@ -19,6 +20,7 @@ const App: React.FC = () => {
           name="Sapphire Dagger"
         />
       </div>
+      <ItemDetails />
     </>
   );
 };
