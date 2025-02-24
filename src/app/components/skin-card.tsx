@@ -1,7 +1,4 @@
-
 import Image from "next/image";
-
-
 
 interface SkinCardProps {
   image: string;
@@ -11,7 +8,6 @@ interface SkinCardProps {
   name: string; // Шинэ props (Скиний нэр)
 }
 
-
 import ItemDetails from "./itemDetail";
 
 const SkinCard: React.FC<SkinCardProps> = ({
@@ -20,9 +16,8 @@ const SkinCard: React.FC<SkinCardProps> = ({
   floatValue,
   name,
 }) => {
-
   return (
-    <div className="flex flex-wrap mr-auto  gap-1 w-[1300px]">
+    <div className="flex flex-wrap mr-auto  gap-1">
       <div className="relative  bg-[#2a2c2e]  text-white w-[107px] px-2 rounded-lg">
         {/* Үнэ */}
         <div className="flex justify-between">
@@ -55,7 +50,6 @@ const SkinCard: React.FC<SkinCardProps> = ({
           {name}
         </div>
       </div>
-    
     </div>
   );
 };
