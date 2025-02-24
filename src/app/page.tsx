@@ -9,18 +9,18 @@ const App: React.FC = () => {
   return (
     <>
       <MainLayout>
-        <div>hi</div>
+        <div className="flex justify-center h-full  bg-gray-800">
+          <SkinCard
+            image="/marblefade.png"
+            price={2335}
+            condition="MW"
+            floatValue={0.1117562}
+            name="Butterfly Knife | Marble Fade (Factory New)
+"
+          />
+          <ItemDetails />
+        </div>
       </MainLayout>
-      <div className="flex justify-center items-center h-screen bg-gray-800">
-        <SkinCard
-          image="/sapphire.png"
-          price={0.85}
-          condition="MW"
-          floatValue={0.1117562}
-          name="Sapphire Dagger"
-        />
-      </div>
-      <ItemDetails />
     </>
   );
 };
