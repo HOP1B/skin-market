@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Heart, ShoppingCart } from "lucide-react";
+import { Heart, Info, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 
 const item = {
@@ -53,12 +53,10 @@ export function ProgressDemo() {
 
 export default function ItemDetails() {
   return (
-    <div className="flex justify-center items-center h-screen bg-zinc-50 p-4">
+    <div className="flex justify-center items-center h-full ">
       <Dialog>
         <DialogTrigger asChild>
-          <Button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3">
-            View Item
-          </Button>
+          <Info size={17} color="#353935" />
         </DialogTrigger>
         <DialogContent className="max-w-lg bg-gray-800 border-gray-700 text-white rounded-lg">
           <DialogHeader>
@@ -79,13 +77,11 @@ export default function ItemDetails() {
               <p className="text-sm text-gray-300">
                 Reference Price: ${item.referencePrice}
               </p>
-              <p className="text-sm text-gray-400">
-                Item type: Knife
-              </p>
+              <p className="text-sm text-gray-400">Item type: Knife</p>
               <p className="text-sm text-gray-400">Location: {item.location}</p>
               <p className="text-sm text-gray-400">Pattern: {item.pattern}</p>
               <p className="text-sm text-gray-400">Float: {item.float}</p>
-              <Progress value={60}  className="h-2 bg-gray-600" />
+              <Progress value={60} className="h-2 bg-gray-600" />
             </CardContent>
             <CardFooter className="flex justify-between mt-4">
               <Button variant="ghost">
