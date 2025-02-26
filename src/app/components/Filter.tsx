@@ -63,6 +63,65 @@ export const Filter = () => {
             </div>
           </form>
         </div>
+        <div className="border-b border-[#35373a80] py-5">
+          <div className="text-white text-sm font-medium">Items category</div>
+          <form className="pt-3">
+            <div className="flex gap-3 py-1">
+              <input type="checkbox" />
+              <Link href={""} className="text-white">
+                All
+              </Link>
+            </div>
+            <div className="flex gap-3 py-1">
+              <input type="checkbox" />
+              <Link href={""} className="text-white">
+                Knifes
+              </Link>
+            </div>
+            <div className="flex gap-3 py-1">
+              <input type="checkbox" />
+              <Link href={""} className="text-white">
+                Rifles
+              </Link>
+            </div>
+            <div className="flex gap-3 py-1">
+              <input type="checkbox" />
+              <Link href={""} className="text-white">
+                Sniper Rifles
+              </Link>
+            </div>
+            <div className="flex gap-3 py-1">
+              <input type="checkbox" />
+              <Link href={""} className="text-white">
+                Pistols
+              </Link>
+            </div>
+            <div className="flex gap-3 py-1">
+              <input type="checkbox" />
+              <Link href={""} className="text-white">
+                SMG
+              </Link>
+            </div>
+            <div className="flex gap-3 py-1">
+              <input type="checkbox" />
+              <Link href={""} className="text-white">
+                Shotguns
+              </Link>
+            </div>
+            <div className="flex gap-3 py-1">
+              <input type="checkbox" />
+              <Link href={""} className="text-white">
+                Machine guns
+              </Link>
+            </div>
+            <div className="flex gap-3 py-1">
+              <input type="checkbox" />
+              <Link href={""} className="text-white">
+                Equipment
+              </Link>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
