@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
-
+import {
+  ClerkProvider,
+  SignInButton,
+  SignedIn,
+  SignedOut,
+} from "@clerk/nextjs";
 import "./globals.css";
-
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,8 +19,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="h-[calc(60vh)] bg-[#1d1f20]">{children}</body>
-    </html>
+    <ClerkProvider
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+    >
+      <html lang="en">
+        <body className="h-[calc(60vh)] bg-gray-800">
+          <SignedOut>
+            <SignInButton>
+              <Button>Nevtreh</Button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>{children}</SignedIn>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
