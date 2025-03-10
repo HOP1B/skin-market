@@ -56,7 +56,7 @@ export default function ItemDetails() {
     <div className="flex justify-center items-center h-full ">
       <Dialog>
         <DialogTrigger asChild>
-          <Info size={17} color="#353935" />
+          <Info size={24} color="#353935" className="mt-[5px]" />
         </DialogTrigger>
         <DialogContent className="max-w-lg bg-gray-800 border-gray-700 text-white rounded-lg">
           <DialogHeader>

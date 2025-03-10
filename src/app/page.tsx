@@ -10,8 +10,8 @@ const App: React.FC = () => {
   return (
     <>
       <MainLayout>
-        <div className="flex pr-4">
-          <div className="flex-1 flex justify-center h-full  bg-gray-800">
+        <div className="flex">
+          <div className="flex-1 flex justify-center h-full  bg-[#1d1f20]">
             <SkinCard
               image="/marblefade.png"
               price={2335}
