@@ -12,3 +12,103 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum ItemType {
+  KNIFE
+  PISTOL
+  SMG
+  HEAVY
+  RIFLE
+}
+
+enum Item {
+  // Pistols
+  GLOCK_18
+  USP_S
+  P2000
+  P250
+  FIVE_SEVEN
+  CZ75_AUTO
+  TEC_9
+  DESERT_EAGLE
+  R8_REVOLVER
+  DUAL_BERETTAS
+
+  // Submachine Guns (SMGs)
+  MAC_10
+  MP9
+  MP7
+  MP5_SD
+  UMP_45
+  P90
+  PP_BIZON
+
+  // Rifles
+  GALIL_AR
+  FAMAS
+  AK_47
+  M4A4
+  M4A1_S
+  AUG
+  SG_553
+  SSG_08
+  AWP
+  G3SG1
+  SCAR_20
+
+  // Heavy Weapons
+  NOVA
+  XM1014
+  SAWED_OFF
+  MAG_7
+  M249
+  NEGEV
+
+  // Knives
+  BAYONET
+  FLIP_KNIFE
+  GUT_KNIFE
+  KARAMBIT
+  M9_BAYONET
+  HUNTSMAN_KNIFE
+  FALCHION_KNIFE
+  BOWIE_KNIFE
+  BUTTERFLY_KNIFE
+  SHADOW_DAGGERS
+  PARACORD_KNIFE
+  SURVIVAL_KNIFE
+  NOMAD_KNIFE
+  SKELETON_KNIFE
+  CLASSIC_KNIFE
+  TALON_KNIFE
+  URSUS_KNIFE
+  NAVAJAKNIFE
+  STILETTO_KNIFE
+}
+
+model Skin {
+  id       String        @id @default(nanoid())
+  imageUrl String
+  skinname String
+  itemtype ItemType
+  item     Item
+  listings SkinListing[]
+}
+
+enum Status {
+  FACTORY_NEW
+  MINIMAL_WEAR
+  FIELD_TESTED
+  WELL_WORN
+  BATTLE_SCARED
+}
+
+model SkinListing {
+  id        String   @id @default(nanoid())
+  userId    String
+  skinId    String
+  skin      Skin     @relation(fields: [skinId], references: [id])
+  price     Int
+  status    Status
+  createdAt DateTime @default(now())
+}
