@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
-// Initialize Prisma client
 const prisma = new PrismaClient();
 
 export const POST = async (req: NextRequest) => {
   try {
-    // Parse the incoming JSON body
     const { userId, amount } = await req.json();
 
     if (!userId || amount === undefined || amount <= 0) {
@@ -23,19 +21,17 @@ export const POST = async (req: NextRequest) => {
       where: { userId },
     });
 
-    // If the user doesn't have a wallet, create one
     if (!wallet) {
       wallet = await prisma.wallet.create({
         data: {
-          userId, // Use the provided userId
-          balance: amount, // Set the initial balance to the provided amount
+          userId,
+          balance: amount,
         },
       });
 
-      return NextResponse.json(wallet, { status: 201 }); // Wallet created, return wallet data
+      return NextResponse.json(wallet, { status: 201 });
     }
 
-    // If the user already has a wallet, charge money to it (increment balance)
     wallet = await prisma.wallet.update({
       where: { id: wallet.id },
       data: {
@@ -45,7 +41,6 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
-    // Return the updated wallet
     return NextResponse.json(wallet, { status: 200 });
   } catch (error) {
     console.error("Error processing wallet:", error);
