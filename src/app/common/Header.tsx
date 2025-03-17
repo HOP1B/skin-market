@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeftRight, Box, Heart, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BalanceDialog } from "../components/BalanceDialog";
 import { AddSkinDialog } from "../components/AddSkinDialog";
 
 export const Header = () => {
@@ -45,10 +46,15 @@ export const Header = () => {
           </div>
         </nav>
       </div>
-
       <div className="flex gap-2">
         <AddSkinDialog />
-
+        <BalanceDialog />
+        <Button className="bg-[#303030]">
+          <Link href={"/login"}>Log in</Link>
+        </Button>
+        <Button className="bg-[#303030]">
+          <Link href={"/signup"}>Sign up</Link>
+        </Button>
         <Button className="py-1 px-2 bg-[#303030]">
           <Image src={"/profile.png"} alt="profile" width={20} height={20} />
         </Button>
