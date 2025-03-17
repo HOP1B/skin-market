@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeftRight, Box, Heart, ShoppingCart } from "lucide-react";
+import { ArrowLeftRight, Box, Heart,  ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BalanceDialog } from "../components/BalanceDialog";
 
 export const Header = () => {
   return (
@@ -44,8 +45,8 @@ export const Header = () => {
           </div>
         </nav>
       </div>
-
       <div className="flex gap-2">
+        <BalanceDialog/>
         <Button className="bg-[#303030]">
           <Link href={"/login"}>Log in</Link>
         </Button>

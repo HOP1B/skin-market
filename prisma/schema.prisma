@@ -112,3 +112,10 @@ model SkinListing {
   status    Status
   createdAt DateTime @default(now())
 }
+
+model Wallet {
+  id        String   @id @default(nanoid())
+  userId    String
+  balance   Float    @default(0)
+}
+
