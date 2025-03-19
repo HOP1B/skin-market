@@ -32,12 +32,12 @@ export default function ItemDetails({ image, price, name }: ItemDetailsProps) {
             <DialogTitle className="text-xl">{name}</DialogTitle>
           </DialogHeader>
           <Card className="bg-[#1e2229] border border-gray-600 rounded-lg p-4">
-            <Image
+            <img
               src={image}
               width={600}
               height={300}
               alt={name}
-              className="w-full h-[300px] object-cover rounded-lg"
+              className="w-full h-[300px] object-fill rounded-lg"
             />
             <CardContent className="mt-4 space-y-2">
               <p className="text-lg font-bold text-green-500">

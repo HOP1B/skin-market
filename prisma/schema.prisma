@@ -93,6 +93,7 @@ model Skin {
   itemtype ItemType
   item     Item
   listings SkinListing[]
+  UserSkin UserSkin[]
 }
 
 enum Status {
@@ -119,3 +120,11 @@ model Wallet {
   balance   Float    @default(0)
 }
 
+model UserSkin {
+  id        String   @id @default(nanoid())
+  userId    String
+  skinId    String
+  skin      Skin     @relation(fields: [skinId], references: [id])
+  status    Status
+  createdAt DateTime @default(now())
+}
