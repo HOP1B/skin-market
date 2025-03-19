@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeftRight, Box, Heart, ShoppingCart } from "lucide-react";
+import {  Box,  ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BalanceDialog } from "../components/BalanceDialog";
 import { AddSkinDialog } from "../components/AddSkinDialog";
@@ -26,24 +26,14 @@ export const Header = () => {
               Market
             </button>
           </div>
-          <div className="h-[60px] px-2 flex items-center justify-center">
-            <button className="uppercase text-[#8dd294] text-sm flex items-center gap-2">
-              <ArrowLeftRight />
-              Trade
-            </button>
-          </div>
+         
           <div className="h-[60px] px-2 flex items-center justify-center">
             <button className="uppercase text-[#8dd294] text-sm flex items-center gap-2">
               <Box />
               My inventory
             </button>
           </div>
-          <div className="h-[60px] px-2 flex items-center justify-center">
-            <button className="uppercase text-[#8dd294] text-sm flex items-center gap-2">
-              <Heart />
-              Favorite
-            </button>
-          </div>
+          
         </nav>
       </div>
       <div className="flex gap-2">
