@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeftRight, Box, Heart, ShoppingCart } from "lucide-react";
+import {  Box,  ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BalanceDialog } from "../components/BalanceDialog";
 import { AddSkinDialog } from "../components/AddSkinDialog";

@@ -25,7 +25,7 @@ export  const SkinCard = ({ image, price, condition, name }: SkinCardProps) => {
           <ItemDetails image={image} price={price} name={name} />
         </div>
 
-        <img src={image}  alt="" className="w-30 " />
+        <Image src={image}  alt="" className="w-30 " />
 
         <div className="flex flex-col ml-[4px] mr-auto">
           <span className="text-[#848484] text-[16px] rounded-md">

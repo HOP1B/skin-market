@@ -32,7 +32,7 @@ export default function ItemDetails({ image, price, name }: ItemDetailsProps) {
             <DialogTitle className="text-xl">{name}</DialogTitle>
           </DialogHeader>
           <Card className="bg-[#1e2229] border border-gray-600 rounded-lg p-4">
-            <img
+            <Image
               src={image}
               width={600}
               height={300}
