@@ -7,6 +7,7 @@ import {
 } from "@clerk/nextjs";
 import "./globals.css";
 import { Button } from "@/components/ui/button";
+import { SessionProviderWrapper } from "@/components/SessionProviderWrapper";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -24,12 +25,14 @@ export default function RootLayout({
     >
       <html lang="en">
         <body className="h-[calc(60vh)] bg-gray-800">
-          <SignedOut>
-            <SignInButton>
-              <Button>Nevtreh</Button>
-            </SignInButton>
-          </SignedOut>
-          <SignedIn>{children}</SignedIn>
+          <SessionProviderWrapper>
+            <SignedOut>
+              <SignInButton>
+                <Button>Nevtreh</Button>
+              </SignInButton>
+            </SignedOut>
+            <SignedIn>{children}</SignedIn>
+          </SessionProviderWrapper>
         </body>
       </html>
     </ClerkProvider>
