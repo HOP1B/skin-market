@@ -1,7 +1,19 @@
 import type { Metadata } from "next";
-import { ClerkProvider, SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+} from "@clerk/nextjs";
 import "./globals.css";
 import { Button } from "@/components/ui/button";
+import { Play } from "next/font/google";
+
+const play = Play({
+  weight: ["400", "700"],
+  fallback: ["Roboto", "Roboto Condensed"],
+  subsets: ["latin", "latin-ext"],
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,7 +29,7 @@ export default function RootLayout({
     <ClerkProvider
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
     >
-      <html lang="en">
+      <html lang="en" className={play.className}>
         <body className="h-[calc(60vh)] bg-gray-800">
           <SignedOut>
             <SignInButton>
@@ -30,3 +42,5 @@ export default function RootLayout({
     </ClerkProvider>
   );
 }
+
+// __Play_976028", "__Play_Fallback_976028
