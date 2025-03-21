@@ -39,7 +39,7 @@ export const BalanceDialog = () => {
 
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button>
           <Plus className="text-[#8dd294] justify-end" />
         </Button>

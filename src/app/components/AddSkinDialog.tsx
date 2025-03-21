@@ -140,7 +140,7 @@ export function AddSkinDialog() {
         userId: session?.user.id,
       });
 
-      toast("Success", {
+      toast.success("Success", {
         description: "Skin added successfully",
       });
 
@@ -149,7 +149,7 @@ export function AddSkinDialog() {
       setOpen(false);
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast("Error", {
+      toast.error("Error", {
         description: "Failed to add skin. Please try again.",
       });
     }
