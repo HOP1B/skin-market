@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Box, ShoppingCart } from "lucide-react";
@@ -27,6 +29,7 @@ export const Header = () => {
               Market
             </button>
           </div>
+
           <div className="h-[60px] px-2 flex items-center justify-center">
             <button className="uppercase text-[#4fd25c] text-sm flex items-center gap-2">
               <Box />
@@ -35,7 +38,7 @@ export const Header = () => {
           </div>
         </nav>
       </div>
-      <div className="flex gap-2">
+      <div className="flex items-center gap-2">
         <AddSkinDialog />
         <BalanceDialog />
         <SignedIn>
