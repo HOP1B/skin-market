@@ -4,7 +4,7 @@ import { MainLayout } from "./common/MainLayout";
 import axios from "axios";
 import { SkinCard } from "./components/SkinCard";
 import React, { useEffect, useState } from "react";
-import { Filter } from "./components/Filter";
+import  ItemsFilter  from "./components/ItemsFilter";
 import { Search } from "lucide-react";
 import { Prisma } from "@prisma/client";
 
@@ -22,7 +22,7 @@ const App = () => {
   useEffect(() => {
     const fetchSkins = async () => {
       try {
-        const res = await axios.get("/api/skin/listing");
+        const res = await axios.get("/api/skins/listing");
         setSkins(res.data);
       } catch (error) {
         console.log(error);
@@ -39,7 +39,7 @@ const App = () => {
   return (
     <>
       <MainLayout>
-        <div className="flex justify-between pr-4 pt-4">
+        <div className="flex justify-between pr-4 pt-4 bg-[#1d1f20]">
           <div className="pl-5">
             <form className="relative w-[253px] h-12 mb-4">
               <ul className="mt-3 space-y-2">
@@ -68,7 +68,7 @@ const App = () => {
               ))}
             </div>
           </div>
-          <Filter />
+          <ItemsFilter />
         </div>
       </MainLayout>
     </>
