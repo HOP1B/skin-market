@@ -31,6 +31,10 @@ const App = () => {
 
     fetchSkins();
   }, []);
+  const [query, setQuery] = useState<string>("");
+  const filteredSkins = skins.filter((listing) =>
+    listing.skin?.skinname?.toLowerCase().includes(query.toLowerCase())
+  );
 
   return (
     <>
@@ -38,17 +42,22 @@ const App = () => {
         <div className="flex justify-between pr-4 pt-4 bg-[#1d1f20]">
           <div className="pl-5">
             <form className="relative w-[253px] h-12 mb-4">
-              <input
-                type="text"
-                placeholder="Search market"
-                className="w-full h-full bg-[#2a2c2e] rounded-md pl-12 placeholder-white text-white"
-              />
+              <ul className="mt-3 space-y-2">
+              
+                <input
+                  type="text"
+                  placeholder=""
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </ul>
               <div className="w-12 h-full flex items-center justify-center absolute top-0 left-0 bg-[#2a2c2e]">
                 <Search color="white" size={24} />
               </div>
             </form>
-            <div className="grid grid-cols-11 gap-1">
-              {skins.map((listing) => (
+            <div className="grid grid-cols-11 gap-5 bg-gray-800">
+              {filteredSkins.map((listing) => (
                 <SkinCard
                   key={listing.id}
                   image={listing.skin.imageUrl}

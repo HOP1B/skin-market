@@ -10,9 +10,9 @@ type SkinCardProps = {
   name: string;
 };
 
-export  const SkinCard = ({ image, price, condition, name }: SkinCardProps) => {
+export const SkinCard = ({ image, price, condition, name }: SkinCardProps) => {
   return (
-    <div className="flex flex-wrap ml-[7px] gap-1">
+    <div className="flex flex-wrap ml-[7px] gap-10">
       <div className="relative bg-[#2a2c2e] text-white w-[162px] h-[152px] px-4 rounded-lg">
         <div className="flex gap-5">
           <div className="text-green-400 text-[20px] font-semibold flex mr-auto">
@@ -25,7 +25,7 @@ export  const SkinCard = ({ image, price, condition, name }: SkinCardProps) => {
           <ItemDetails image={image} price={price} name={name} />
         </div>
 
-        <Image src={image} alt="" className="w-30" />
+        <Image width={100} height={100} src={image} alt="" className="w-30" />
 
         <div className="flex flex-col ml-[4px] mr-auto">
           <span className="text-[#848484] text-[16px] rounded-md">
