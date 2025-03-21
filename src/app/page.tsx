@@ -2,11 +2,10 @@
 
 import { MainLayout } from "./common/MainLayout";
 import axios from "axios";
-import { SkinCard } from "./components/SkinCard";
+// import { SkinCard } from "./components/SkinCard";
 import React, { useEffect, useState } from "react";
-import  ItemsFilter  from "./components/ItemsFilter";
-import { Search } from "lucide-react";
 import { Prisma } from "@prisma/client";
+import Image from "next/image";
 
 const App = () => {
   const [skins, setSkins] = useState<
@@ -31,44 +30,43 @@ const App = () => {
 
     fetchSkins();
   }, []);
-  const [query, setQuery] = useState<string>("");
-  const filteredSkins = skins.filter((listing) =>
-    listing.skin?.skinname?.toLowerCase().includes(query.toLowerCase())
-  );
+
+  // const [query, setQuery] = useState<string>("");
+  // const filteredSkins = skins.filter((listing) =>
+  //   listing.skin?.skinname?.toLowerCase().includes(query.toLowerCase())
+  // );
 
   return (
     <>
       <MainLayout>
-        <div className="flex justify-between pr-4 pt-4 bg-[#1d1f20]">
-          <div className="pl-5">
-            <form className="relative w-[253px] h-12 mb-4">
-              <ul className="mt-3 space-y-2">
-              
-                <input
-                  type="text"
-                  placeholder=""
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        <div className="grid grid-cols-8 gap-4">
+          <div>
+            <div className="bg-[#2b2b3b] rounded w-full">
+              <div className="flex flex-col items-center justify-center ">
+                <Image
+                  src={"/400fx300f.png"}
+                  alt=""
+                  width={187}
+                  height={128}
+                  className="px-2 pt-2 pb-1 h-full aspect-[187/128] w-full"
                 />
-              </ul>
-              <div className="w-12 h-full flex items-center justify-center absolute top-0 left-0 bg-[#2a2c2e]">
-                <Search color="white" size={24} />
               </div>
-            </form>
-            <div className="grid grid-cols-11 gap-5 bg-gray-800">
-              {filteredSkins.map((listing) => (
-                <SkinCard
-                  key={listing.id}
-                  image={listing.skin.imageUrl}
-                  price={listing.price}
-                  condition={listing.status}
-                  name={listing.skin.skinname}
-                />
-              ))}
+              <div className="flex flex-col gap-1 pb-3 px-3">
+                <div className="flex gap-1 items-center text-[#c4c4d4] text-sm">
+                  M9 Bayonet
+                </div>
+                <div className="flex gap-1 items-center justify-between">
+                  <p className="text-[#e5e6e5] text-sm font-bold">Slaughter</p>
+                  <p className="text-[#e92a61] text-xs font-bold">-37%</p>
+                </div>
+                <div className="flex gap-1 items-center justify-between">
+                  <p className="text-[#e5e6e5] font-bold">$1000.00</p>
+                  <p className="text-[#c4c4d4] text-xs">$2000.00</p>
+                </div>
+                <div className="text-[#c4c4d4] text-xs">Factory New</div>
+              </div>
             </div>
           </div>
-          <ItemsFilter />
         </div>
       </MainLayout>
     </>
