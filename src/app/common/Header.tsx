@@ -39,7 +39,7 @@ export const Header = () => {
       </div>
       <div className="flex items-center gap-2">
         <AddSkinDialog />
-        <BalanceDialog initialBalance={250} />
+        <BalanceDialog />
         <Button
           className="bg-[#303030] hover:bg-[#404040]"
           onClick={() => console.log("Sign out clicked")}

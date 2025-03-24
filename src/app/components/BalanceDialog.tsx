@@ -1,35 +1,70 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useRef, useEffect } from "react"
-import Image from "next/image"
-import { ArrowLeft, Plus, QrCode, Wallet } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Skeleton } from "@/components/ui/skeleton"
+import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
+import { ArrowLeft, Plus, QrCode, Wallet } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface BalanceDialogProps {
-  userId?: string
-  initialBalance?: number
-  onBalanceChange?: (newBalance: number) => void
+  userId?: string;
+  initialBalance?: number;
+  onBalanceChange?: (newBalance: number) => void;
 }
 
-export const BalanceDialog = ({ userId = "anonymous", initialBalance = 0, onBalanceChange }: BalanceDialogProps) => {
-  const [money, setMoney] = useState(initialBalance)
-  const [inputValue, setInputValue] = useState("")
-  const [amountToAdd, setAmountToAdd] = useState(0)
-  const [showQRCode, setShowQRCode] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const [open, setOpen] = useState(false)
+// Define a consistent localStorage key
+const BALANCE_STORAGE_KEY = "cs2_market_user_balance";
+
+export const BalanceDialog = ({
+  initialBalance = 0,
+  onBalanceChange,
+}: BalanceDialogProps) => {
+  const [money, setMoney] = useState<number>(initialBalance);
+  const [inputValue, setInputValue] = useState("");
+  const [amountToAdd, setAmountToAdd] = useState(0);
+  const [showQRCode, setShowQRCode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [open, setOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient) {
+      try {
+        const savedBalance = localStorage.getItem(BALANCE_STORAGE_KEY);
+        if (savedBalance) {
+          const parsedBalance = Number.parseFloat(savedBalance);
+          if (!isNaN(parsedBalance)) {
+            setMoney(parsedBalance);
+          }
+        }
+      } catch (error) {
+        console.error("Error loading balance from localStorage:", error);
+      }
+    }
+  }, [isClient]);
 
   // Add CSS for shimmer animation
   useEffect(() => {
-    const style = document.createElement("style")
+    if (!isClient) return;
+
+    const style = document.createElement("style");
     style.textContent = `
       @keyframes shimmer {
         0% {
@@ -42,28 +77,36 @@ export const BalanceDialog = ({ userId = "anonymous", initialBalance = 0, onBala
       .animate-shimmer {
         animation: shimmer 2s infinite;
       }
-    `
-    document.head.appendChild(style)
+    `;
+    document.head.appendChild(style);
 
     return () => {
-      document.head.removeChild(style)
-    }
-  }, [])
+      document.head.removeChild(style);
+    };
+  }, [isClient]);
 
   // Predefined deposit amounts
-  const depositAmounts = [10, 25, 50, 100, 250, 500]
+  const depositAmounts = [10, 25, 50, 100, 250, 500];
 
+  // Update localStorage whenever money changes (but only on client)
   useEffect(() => {
-    setMoney(initialBalance)
-  }, [initialBalance])
+    if (isClient) {
+      try {
+        localStorage.setItem(BALANCE_STORAGE_KEY, money.toString());
+      } catch (error) {
+        console.error("Error saving balance to localStorage:", error);
+      }
+    }
+  }, [money, isClient]);
 
   const updateBalance = (newBalance: number) => {
-    setMoney(newBalance)
+    setMoney(newBalance);
+
+    // Notify parent component if callback exists
     if (onBalanceChange) {
-      onBalanceChange(newBalance)
+      onBalanceChange(newBalance);
     }
-    console.log(`Balance updated for user ${userId}: ${newBalance}`)
-  }
+  };
 
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat("en-US", {
@@ -71,93 +114,101 @@ export const BalanceDialog = ({ userId = "anonymous", initialBalance = 0, onBala
       currency: "USD",
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
-    }).format(value)
-  }
+    }).format(value);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    const numericValue = value.replace(/[^0-9.]/g, "")
+    const value = e.target.value;
+    const numericValue = value.replace(/[^0-9.]/g, "");
 
     // Ensure only one decimal point
-    const parts = numericValue.split(".")
-    const formattedNumeric = parts.length > 2 ? `${parts[0]}.${parts.slice(1).join("")}` : numericValue
+    const parts = numericValue.split(".");
+    const formattedNumeric =
+      parts.length > 2
+        ? `${parts[0]}.${parts.slice(1).join("")}`
+        : numericValue;
 
-    setInputValue(formattedNumeric)
-  }
+    setInputValue(formattedNumeric);
+  };
 
   const handleAmountSelect = (amount: number) => {
-    setInputValue(amount.toString())
+    setInputValue(amount.toString());
     if (inputRef.current) {
-      inputRef.current.value = amount.toString()
+      inputRef.current.value = amount.toString();
     }
-  }
+  };
 
   const handleSubmit = (e?: React.FormEvent) => {
-    if (e) e.preventDefault()
+    if (e) e.preventDefault();
 
-    const amount = Number.parseFloat(inputValue)
+    const amount = Number.parseFloat(inputValue);
     if (!inputValue) {
-      setError("Please enter an amount")
-      return
+      setError("Please enter an amount");
+      return;
     }
     if (isNaN(amount)) {
-      setError("Please enter a valid number")
-      return
+      setError("Please enter a valid number");
+      return;
     }
     if (amount <= 0) {
-      setError("Amount must be greater than zero")
-      return
+      setError("Amount must be greater than zero");
+      return;
     }
 
-    setError("")
-    setAmountToAdd(amount)
-    setShowQRCode(true)
-  }
+    setError("");
+    setAmountToAdd(amount);
+    setShowQRCode(true);
+  };
 
   const handleBack = () => {
-    setShowQRCode(false)
-  }
+    setShowQRCode(false);
+  };
 
   const handleBankLogoClick = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       // Simulate payment processing
       setTimeout(() => {
-        const newBalance = money + amountToAdd
-        updateBalance(newBalance)
-        setSuccess(true)
+        const newBalance = money + amountToAdd;
+        updateBalance(newBalance);
+        setSuccess(true);
         setTimeout(() => {
-          setSuccess(false)
-          setShowQRCode(false)
-          setAmountToAdd(0)
-          setInputValue("")
+          setSuccess(false);
+          setShowQRCode(false);
+          setAmountToAdd(0);
+          setInputValue("");
           if (inputRef.current) {
-            inputRef.current.value = ""
+            inputRef.current.value = "";
           }
-          setOpen(false)
-        }, 2000)
-        setLoading(false)
-      }, 1500)
+          setOpen(false);
+        }, 2000);
+        setLoading(false);
+      }, 1500);
     } catch (error) {
-      console.error("Error charging wallet:", error)
+      console.error("Error charging wallet:", error);
       // Fallback behavior
-      const newBalance = money + amountToAdd
-      updateBalance(newBalance)
-      setSuccess(true)
+      const newBalance = money + amountToAdd;
+      updateBalance(newBalance);
+      setSuccess(true);
       setTimeout(() => {
-        setSuccess(false)
-        setShowQRCode(false)
-        setAmountToAdd(0)
-        setInputValue("")
+        setSuccess(false);
+        setShowQRCode(false);
+        setAmountToAdd(0);
+        setInputValue("");
         if (inputRef.current) {
-          inputRef.current.value = ""
+          inputRef.current.value = "";
         }
-        setOpen(false)
-      }, 2000)
+        setOpen(false);
+      }, 2000);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
+
+  // Function to reset balance (for testing)
+  const resetBalance = () => {
+    updateBalance(0);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -170,15 +221,26 @@ export const BalanceDialog = ({ userId = "anonymous", initialBalance = 0, onBala
             <span className="text-[#4fd25c]">$</span>
             {formatCurrency(money).replace("$", "")}
           </Button>
-          <Button variant="ghost" size="icon" className="p-0 h-auto w-auto hover:bg-[#303030] rounded-full">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="p-0 h-auto w-auto hover:bg-[#303030] rounded-full"
+          >
             <Plus className="text-[#4fd25c] w-4 h-4" />
           </Button>
         </div>
       </DialogTrigger>
       <DialogContent className="max-w-xl bg-[#1d1f20] border-[#303030] text-white rounded-lg p-0">
         <DialogHeader className="relative flex items-center justify-center p-4 border-b border-[#303030]">
-          {showQRCode && <ArrowLeft onClick={handleBack} className="text-white cursor-pointer absolute left-4 top-4" />}
-          <DialogTitle className="text-xl text-center flex-1">Your Balance: {formatCurrency(money)}</DialogTitle>
+          {showQRCode && (
+            <ArrowLeft
+              onClick={handleBack}
+              className="text-white cursor-pointer absolute left-4 top-4"
+            />
+          )}
+          <DialogTitle className="text-xl text-center flex-1">
+            Your Balance: {formatCurrency(money)}
+          </DialogTitle>
         </DialogHeader>
 
         {!showQRCode ? (
@@ -188,7 +250,19 @@ export const BalanceDialog = ({ userId = "anonymous", initialBalance = 0, onBala
                 <Wallet className="w-5 h-5 mr-2 text-[#4fd25c]" />
                 Add Funds
               </h3>
-              <div className="text-sm text-gray-400">CS2 Market</div>
+              <div className="text-sm text-gray-400 flex items-center gap-2">
+                CS2 Market
+                {/* For testing - small reset button */}
+                {isClient && (
+                  <button
+                    onClick={resetBalance}
+                    className="text-xs text-gray-500 hover:text-[#4fd25c] ml-2"
+                    title="Reset balance (for testing)"
+                  >
+                    Reset
+                  </button>
+                )}
+              </div>
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -205,7 +279,7 @@ export const BalanceDialog = ({ userId = "anonymous", initialBalance = 0, onBala
                         : "bg-[#303030] hover:bg-[#404040]"
                     }`}
                   >
-                    {inputValue === amount.toString() && (
+                    {inputValue === amount.toString() && isClient && (
                       <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
                     )}
                     <span className="font-bold">{formatCurrency(amount)}</span>
@@ -214,11 +288,16 @@ export const BalanceDialog = ({ userId = "anonymous", initialBalance = 0, onBala
               </div>
 
               <div className="mt-6 relative">
-                <label htmlFor="custom-amount" className="text-sm text-gray-300 mb-1 block font-medium">
+                <label
+                  htmlFor="custom-amount"
+                  className="text-sm text-gray-300 mb-1 block font-medium"
+                >
                   Or enter custom amount
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#4fd25c] font-bold">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#4fd25c] font-bold">
+                    $
+                  </span>
                   <Input
                     id="custom-amount"
                     ref={inputRef}
@@ -248,7 +327,10 @@ export const BalanceDialog = ({ userId = "anonymous", initialBalance = 0, onBala
 
             <div className="mb-6 text-center">
               <p className="text-xl font-bold">
-                Adding: <span className="text-[#4fd25c]">{formatCurrency(amountToAdd)}</span>
+                Adding:{" "}
+                <span className="text-[#4fd25c]">
+                  {formatCurrency(amountToAdd)}
+                </span>
               </p>
             </div>
 
@@ -322,7 +404,5 @@ export const BalanceDialog = ({ userId = "anonymous", initialBalance = 0, onBala
         )}
       </DialogContent>
     </Dialog>
-  )
-}
-
-
+  );
+};
