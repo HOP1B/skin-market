@@ -49,16 +49,20 @@ export const POST = async (req: NextRequest) => {
     where: { id: listingId },
   });
   // 3.2 dansnaas mongo hasagdah
-  await prisma.wallet.update({
+  console.log({ wallet, listing });
+  const newBalance = wallet.balance - listing.price;
+  console.log({ newBalance });
+  const newWallet = await prisma.wallet.update({
     where: { id: wallet.id },
     data: {
-      balance: wallet.balance - listing.price,
+      balance: newBalance,
     },
   });
+  console.log({ newWallet });
 
   // 3.3. skiniig zarj bui hunii dansruu mongo ni oroh
   let sellerWallet = await prisma.wallet.findFirst({
-    where: { userId },
+    where: { userId: listing.userId },
   });
 
   if (!sellerWallet) {

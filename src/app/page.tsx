@@ -2,6 +2,7 @@
 
 import { MainLayout } from "./common/MainLayout";
 import axios from "axios";
+// import { SkinCard } from "./components/SkinCard";
 import React, { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { PlaceholderSkinCard } from "./components/SkinCardPlaceHolder";
