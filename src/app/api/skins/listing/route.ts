@@ -4,7 +4,11 @@ import { PrismaClient, Status } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const GET = async () => {
-  const skins = await prisma.skinListing.findMany({});
+  const skins = await prisma.skinListing.findMany({
+    include: {
+      skin: true,
+    },
+  });
   return NextResponse.json(skins);
 };
 
