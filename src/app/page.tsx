@@ -4,69 +4,72 @@ import { MainLayout } from "./common/MainLayout";
 import axios from "axios";
 // import { SkinCard } from "./components/SkinCard";
 import React, { useEffect, useState } from "react";
-import { Prisma } from "@prisma/client";
-import Image from "next/image";
+import { Search } from "lucide-react";
+import { PlaceholderSkinCard } from "./components/SkinCardPlaceHolder";
+import { SkinCard } from "./components/SkinCard";
+import { Listing } from "./components/types";
 
 const App = () => {
-  const [skins, setSkins] = useState<
-    Prisma.SkinListingGetPayload<{
-      include: {
-        skin: true;
-      };
-    }>[]
-  >([]);
-
-  console.log(skins);
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchSkins = async () => {
       try {
+        setLoading(true);
         const res = await axios.get("/api/skins/listing");
-        setSkins(res.data);
+        console.log("API response:", res.data);
+        setListings(res.data);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching skins:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchSkins();
   }, []);
 
-  // const [query, setQuery] = useState<string>("");
-  // const filteredSkins = skins.filter((listing) =>
-  //   listing.skin?.skinname?.toLowerCase().includes(query.toLowerCase())
-  // );
-
   return (
     <>
       <MainLayout>
-        <div className="grid grid-cols-8 gap-4">
-          <div>
-            <div className="bg-[#2b2b3b] rounded w-full">
-              <div className="flex flex-col items-center justify-center ">
-                <Image
-                  src={"/400fx300f.png"}
-                  alt=""
-                  width={187}
-                  height={128}
-                  className="px-2 pt-2 pb-1 h-full aspect-[187/128] w-full"
-                />
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          {/* Filters and search */}
+          <div className="mb-6 flex flex-col md:flex-row gap-4">
+            <div className="relative flex-grow">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
               </div>
-              <div className="flex flex-col gap-1 pb-3 px-3">
-                <div className="flex gap-1 items-center text-[#c4c4d4] text-sm">
-                  M9 Bayonet
-                </div>
-                <div className="flex gap-1 items-center justify-between">
-                  <p className="text-[#e5e6e5] text-sm font-bold">Slaughter</p>
-                  <p className="text-[#e92a61] text-xs font-bold">-37%</p>
-                </div>
-                <div className="flex gap-1 items-center justify-between">
-                  <p className="text-[#e5e6e5] font-bold">$1000.00</p>
-                  <p className="text-[#c4c4d4] text-xs">$2000.00</p>
-                </div>
-                <div className="text-[#c4c4d4] text-xs">Factory New</div>
-              </div>
+              <input
+                type="text"
+                placeholder="Search skins..."
+                className="pl-10 pr-4 py-2 w-full rounded-md bg-[#303030] border border-[#444] text-gray-200 focus:outline-none focus:border-[#8dd294]"
+              />
             </div>
           </div>
+
+          {/* Skin grid */}
+          {loading ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              {Array.from({ length: 12 }).map((_, index) => (
+                <div key={index} className="animate-pulse">
+                  <div className="aspect-square rounded-md bg-[#303030]"></div>
+                  <div className="h-4 bg-[#303030] rounded mt-2 w-3/4"></div>
+                  <div className="h-4 bg-[#303030] rounded mt-2 w-1/2"></div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              {listings.length > 0
+                ? listings.map((listing, index) => (
+                    <SkinCard listing={listing} key={index} />
+                  ))
+                : Array.from({ length: 12 }).map((_, index) => (
+                    <PlaceholderSkinCard key={index} />
+                  ))}
+            </div>
+          )}
         </div>
       </MainLayout>
     </>
