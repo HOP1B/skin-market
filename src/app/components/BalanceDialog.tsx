@@ -138,7 +138,7 @@ export const BalanceDialog = () => {
     <Dialog>
       <DialogTrigger asChild>
         <Button>
-          <Plus className="text-[#8dd294] justify-end" />
+          <Plus className="text-[#e5e6e5] justify-end" />
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-lg bg-gray-800 border-gray-700 text-white rounded-lg">

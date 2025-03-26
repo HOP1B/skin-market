@@ -5,3 +5,9 @@ export type Listing = Prisma.SkinListingGetPayload<{
     skin: true;
   };
 }>;
+
+export type UserSkin = Prisma.UserSkinGetPayload<{
+  include: {
+    skin: true;
+  };
+}>;

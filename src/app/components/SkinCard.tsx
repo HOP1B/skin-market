@@ -1,4 +1,3 @@
-import { formatStatus } from "@/lib/format-status";
 import Image from "next/image";
 import { Listing } from "./types";
 import { getRandomDiscount } from "@/lib/get-random-discount";
@@ -45,7 +44,7 @@ export const SkinCard = ({ listing }: SkinCardProps) => {
             </p>
           </div>
           <div className="text-[#c4c4d4] text-xs">
-            {formatStatus(listing.status)}
+            {listing.status}
           </div>
         </div>
       </div>
