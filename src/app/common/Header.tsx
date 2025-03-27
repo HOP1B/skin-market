@@ -15,19 +15,6 @@ export const Header = () => {
   // In a real app, you would get the userId from your authentication system
   const [userId] = useState("default-user");
   const { session } = useSession();
-  const [wallet, setWallet] = useState<Wallet | null>(null);
-
-  useEffect(() => {
-    if (session?.user.id) {
-      const getWallet = async () => {
-        const res = await axios.get("/api/wallet?userId=" + session?.user.id);
-
-        setWallet(res.data);
-      };
-
-      getWallet();
-    }
-  }, [session]);
 
   return (
     <header className="h-[60px] bg-[#1d1f20] flex justify-between items-center pr-4 border-b-2 border-[#303030]">
@@ -60,13 +47,7 @@ export const Header = () => {
       </div>
       <div className="flex items-center gap-2">
         <AddSkinDialog />
-        <BalanceDialog
-          userId={userId}
-          initialBalance={wallet?.balance}
-          onBalanceChange={(newBalance) => {
-            setWallet({ ...wallet!, balance: newBalance });
-          }}
-        />
+        <BalanceDialog />
         <Button
           className="bg-[#303030] hover:bg-[#404040]"
           onClick={() => console.log("Sign out clicked")}

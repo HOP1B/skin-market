@@ -15,27 +15,12 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-// import { useWallet } from "../hooks/use-wallet";
+import { useWalletStore } from "../hooks/useWalletStore";
+import { useSession } from "@clerk/nextjs";
+import axios from "axios";
 
-interface BalanceDialogProps {
-  userId: string;
-  initialBalance?: number;
-  onBalanceChange?: (newBalance: number) => void;
-}
-
-export const BalanceDialog = ({
-  userId,
-  initialBalance = 0,
-  onBalanceChange,
-}: BalanceDialogProps) => {
-  // const {
-  //   balance,
-  //   loading: walletLoading,
-  //   error: walletError,
-  //   addFunds,
-  //   refreshBalance,
-  //   resetBalance,
-  // } = useWallet({ userId, initialBalance });
+export const BalanceDialog = () => {
+  const { balance, setBalance, add } = useWalletStore();
   const [inputValue, setInputValue] = useState("");
   const [amountToAdd, setAmountToAdd] = useState(0);
   const [showQRCode, setShowQRCode] = useState(false);
@@ -45,27 +30,26 @@ export const BalanceDialog = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const { session } = useSession();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Load balance from backend when component mounts or userId changes
-  // useEffect(() => {
-  //   // Only refresh balance on the client side
-  //   if (typeof window !== "undefined") {
-  //     refreshBalance();
-  //   }
-  // }, [refreshBalance]);
+  useEffect(() => {
+    if (session?.user.id) {
+      axios
+        .get(`/api/wallet`, {
+          params: {
+            userId: session.user.id,
+          },
+        })
+        .then((res) => {
+          setBalance(res.data.balance);
+        });
+    }
+  }, [session?.user]);
 
-  // // Notify parent component when balance changes
-  // useEffect(() => {
-  //   if (onBalanceChange) {
-  //     onBalanceChange(balance);
-  //   }
-  // }, [balance, onBalanceChange]);
-
-  // Add CSS for shimmer animation
   useEffect(() => {
     if (!isClient) return;
 
@@ -152,25 +136,28 @@ export const BalanceDialog = ({
   const handleBankLogoClick = async () => {
     setLoading(true);
     try {
-      // Use the addFunds function from useWallet hook
-      // const success = await addFunds(amountToAdd);
+      axios
+        .post(`/api/wallet/charge`, {
+          userId: session!.user.id,
+          amount: amountToAdd,
+        })
+        .then((res) => {
+          add(amountToAdd);
+        })
+        .finally(() => {
+          setSuccess(true);
 
-      if (!success) {
-        throw new Error("Failed to add funds");
-      }
-
-      setSuccess(true);
-
-      setTimeout(() => {
-        setSuccess(false);
-        setShowQRCode(false);
-        setAmountToAdd(0);
-        setInputValue("");
-        if (inputRef.current) {
-          inputRef.current.value = "";
-        }
-        setOpen(false);
-      }, 2000);
+          setTimeout(() => {
+            setSuccess(false);
+            setShowQRCode(false);
+            setAmountToAdd(0);
+            setInputValue("");
+            if (inputRef.current) {
+              inputRef.current.value = "";
+            }
+            setOpen(false);
+          }, 2000);
+        });
     } catch (error) {
       console.error("Error charging wallet:", error);
       setError("Failed to add funds. Please try again.");
@@ -188,7 +175,7 @@ export const BalanceDialog = ({
             className="bg-gradient-to-r from-[#303030] to-[#404040] border-[#505050] hover:border-[#4fd25c] text-white font-medium flex items-center gap-2 transition-all duration-200 hover:shadow-[0_0_10px_rgba(79,210,92,0.2)]"
           >
             <span className="text-[#4fd25c]">$</span>
-            {formatCurrency(initialBalance).replace("$", "")}
+            {formatCurrency(balance).replace("$", "")}
           </Button>
           <Button
             variant="ghost"
@@ -208,7 +195,7 @@ export const BalanceDialog = ({
             />
           )}
           <DialogTitle className="text-xl text-center flex-1">
-            Your Balance: {formatCurrency(initialBalance)}
+            Your Balance: {formatCurrency(balance)}
           </DialogTitle>
         </DialogHeader>
 

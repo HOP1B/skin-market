@@ -10,7 +10,7 @@ import { formatStatus } from "@/lib/format-status";
 import { getRandomDiscount } from "@/lib/get-random-discount";
 import ItemDetails from "./itemDetail";
 import type { Listing } from "./types";
-import { useWallet } from "../hooks/use-wallet";
+import { useWalletStore } from "../hooks/useWalletStore";
 
 type SkinCardProps = {
   listing: Listing;
@@ -24,9 +24,7 @@ export const SkinCard = ({ listing }: SkinCardProps) => {
   const [isPurchasing, setIsPurchasing] = useState(false);
 
   // Use the wallet hook to access and update balance
-  const { balance, refreshBalance } = useWallet({
-    userId: session?.user.id || "default-user",
-  });
+  const { balance, minus } = useWalletStore();
 
   const { discountPercentage, highPrice } = getRandomDiscount(listing.price);
 
@@ -73,8 +71,7 @@ export const SkinCard = ({ listing }: SkinCardProps) => {
 
       console.log("Purchase successful", response.data);
 
-      // Refresh the wallet balance after purchase
-      await refreshBalance();
+      minus(listing.price);
 
       handleCloseConfirm();
     } catch (error) {
