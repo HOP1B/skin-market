@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import type React from "react";
-
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { ArrowLeft, Plus, QrCode, Wallet } from "lucide-react";
@@ -15,21 +15,12 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useWalletStore } from "../hooks/useWalletStore";
+import { useSession } from "@clerk/nextjs";
+import axios from "axios";
 
-interface BalanceDialogProps {
-  userId?: string;
-  initialBalance?: number;
-  onBalanceChange?: (newBalance: number) => void;
-}
-
-// Define a consistent localStorage key
-const BALANCE_STORAGE_KEY = "cs2_market_user_balance";
-
-export const BalanceDialog = ({
-  initialBalance = 0,
-  onBalanceChange,
-}: BalanceDialogProps) => {
-  const [money, setMoney] = useState<number>(initialBalance);
+export const BalanceDialog = () => {
+  const { balance, setBalance, add } = useWalletStore();
   const [inputValue, setInputValue] = useState("");
   const [amountToAdd, setAmountToAdd] = useState(0);
   const [showQRCode, setShowQRCode] = useState(false);
@@ -39,28 +30,26 @@ export const BalanceDialog = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const { session } = useSession();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
   useEffect(() => {
-    if (isClient) {
-      try {
-        const savedBalance = localStorage.getItem(BALANCE_STORAGE_KEY);
-        if (savedBalance) {
-          const parsedBalance = Number.parseFloat(savedBalance);
-          if (!isNaN(parsedBalance)) {
-            setMoney(parsedBalance);
-          }
-        }
-      } catch (error) {
-        console.error("Error loading balance from localStorage:", error);
-      }
+    if (session?.user.id) {
+      axios
+        .get(`/api/wallet`, {
+          params: {
+            userId: session.user.id,
+          },
+        })
+        .then((res) => {
+          setBalance(res.data.balance);
+        });
     }
-  }, [isClient]);
+  }, [session?.user]);
 
-  // Add CSS for shimmer animation
   useEffect(() => {
     if (!isClient) return;
 
@@ -87,26 +76,6 @@ export const BalanceDialog = ({
 
   // Predefined deposit amounts
   const depositAmounts = [10, 25, 50, 100, 250, 500];
-
-  // Update localStorage whenever money changes (but only on client)
-  useEffect(() => {
-    if (isClient) {
-      try {
-        localStorage.setItem(BALANCE_STORAGE_KEY, money.toString());
-      } catch (error) {
-        console.error("Error saving balance to localStorage:", error);
-      }
-    }
-  }, [money, isClient]);
-
-  const updateBalance = (newBalance: number) => {
-    setMoney(newBalance);
-
-    // Notify parent component if callback exists
-    if (onBalanceChange) {
-      onBalanceChange(newBalance);
-    }
-  };
 
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat("en-US", {
@@ -167,47 +136,34 @@ export const BalanceDialog = ({
   const handleBankLogoClick = async () => {
     setLoading(true);
     try {
-      // Simulate payment processing
-      setTimeout(() => {
-        const newBalance = money + amountToAdd;
-        updateBalance(newBalance);
-        setSuccess(true);
-        setTimeout(() => {
-          setSuccess(false);
-          setShowQRCode(false);
-          setAmountToAdd(0);
-          setInputValue("");
-          if (inputRef.current) {
-            inputRef.current.value = "";
-          }
-          setOpen(false);
-        }, 2000);
-        setLoading(false);
-      }, 1500);
+      axios
+        .post(`/api/wallet/charge`, {
+          userId: session!.user.id,
+          amount: amountToAdd,
+        })
+        .then((res) => {
+          add(amountToAdd);
+        })
+        .finally(() => {
+          setSuccess(true);
+
+          setTimeout(() => {
+            setSuccess(false);
+            setShowQRCode(false);
+            setAmountToAdd(0);
+            setInputValue("");
+            if (inputRef.current) {
+              inputRef.current.value = "";
+            }
+            setOpen(false);
+          }, 2000);
+        });
     } catch (error) {
       console.error("Error charging wallet:", error);
-      // Fallback behavior
-      const newBalance = money + amountToAdd;
-      updateBalance(newBalance);
-      setSuccess(true);
-      setTimeout(() => {
-        setSuccess(false);
-        setShowQRCode(false);
-        setAmountToAdd(0);
-        setInputValue("");
-        if (inputRef.current) {
-          inputRef.current.value = "";
-        }
-        setOpen(false);
-      }, 2000);
+      setError("Failed to add funds. Please try again.");
     } finally {
       setLoading(false);
     }
-  };
-
-  // Function to reset balance (for testing)
-  const resetBalance = () => {
-    updateBalance(0);
   };
 
   return (
@@ -219,7 +175,7 @@ export const BalanceDialog = ({
             className="bg-gradient-to-r from-[#303030] to-[#404040] border-[#505050] hover:border-[#4fd25c] text-white font-medium flex items-center gap-2 transition-all duration-200 hover:shadow-[0_0_10px_rgba(79,210,92,0.2)]"
           >
             <span className="text-[#4fd25c]">$</span>
-            {formatCurrency(money).replace("$", "")}
+            {formatCurrency(balance).replace("$", "")}
           </Button>
           <Button
             variant="ghost"
@@ -239,7 +195,7 @@ export const BalanceDialog = ({
             />
           )}
           <DialogTitle className="text-xl text-center flex-1">
-            Your Balance: {formatCurrency(money)}
+            Your Balance: {formatCurrency(balance)}
           </DialogTitle>
         </DialogHeader>
 
@@ -255,7 +211,7 @@ export const BalanceDialog = ({
                 {/* For testing - small reset button */}
                 {isClient && (
                   <button
-                    onClick={resetBalance}
+                    // onClick={handleResetBalance}
                     className="text-xs text-gray-500 hover:text-[#4fd25c] ml-2"
                     title="Reset balance (for testing)"
                   >
@@ -402,6 +358,12 @@ export const BalanceDialog = ({
             <Skeleton className="h-12 w-12 rounded-full animate-spin bg-[#4fd25c]" />
           </div>
         )}
+
+        {/* {walletError && !error && (
+          <div className="bg-[#3a2a2e] border border-[#e92a61] text-[#e92a61] p-3 rounded-lg mb-4 text-sm">
+            {walletError}
+          </div>
+        )} */}
       </DialogContent>
     </Dialog>
   );
