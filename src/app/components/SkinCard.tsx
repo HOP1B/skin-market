@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import axios from "axios";
 import Image from "next/image";
@@ -7,7 +9,8 @@ import { formatItem } from "@/lib/format-item";
 import { formatStatus } from "@/lib/format-status";
 import { getRandomDiscount } from "@/lib/get-random-discount";
 import ItemDetails from "./itemDetail";
-import { Listing } from "./types";
+import type { Listing } from "./types";
+import { useWallet } from "../hooks/use-wallet";
 
 type SkinCardProps = {
   listing: Listing;
@@ -17,32 +20,74 @@ export const SkinCard = ({ listing }: SkinCardProps) => {
   const { session } = useSession();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [purchaseError, setPurchaseError] = useState("");
+  const [isPurchasing, setIsPurchasing] = useState(false);
+
+  // Use the wallet hook to access and update balance
+  const { balance, refreshBalance } = useWallet({
+    userId: session?.user.id || "default-user",
+  });
 
   const { discountPercentage, highPrice } = getRandomDiscount(listing.price);
 
   const handleOpenDialog = () => setDialogOpen(true);
   const handleCloseDialog = () => {
     setDialogOpen(false);
-    setConfirmOpen(false); // ItemDetails хаагдах үед ConfirmationModal ч хаагдана
+    setConfirmOpen(false);
+    setPurchaseError("");
   };
 
   const handleOpenConfirm = () => {
     setConfirmOpen(true);
-    setDialogOpen(false); // ItemDetails-ийг хааж, зөвхөн ConfirmationModal үлдээнэ
+    setDialogOpen(false);
+    setPurchaseError("");
   };
 
-  const handleCloseConfirm = () => setConfirmOpen(false);
+  const handleCloseConfirm = () => {
+    setConfirmOpen(false);
+    setPurchaseError("");
+  };
 
   const handleBuy = async () => {
+    if (!session?.user.id) {
+      setPurchaseError("You must be logged in to make a purchase");
+      return;
+    }
+
+    // Check if user has enough balance
+    if (balance < listing.price) {
+      setPurchaseError(
+        "Insufficient funds. Please add more funds to your wallet."
+      );
+      return;
+    }
+
+    setIsPurchasing(true);
+    setPurchaseError("");
+
     try {
-      await axios.post("/api/skin/listing/buy", {
+      const response = await axios.post("/api/skin/listing/buy", {
         listingId: listing.id,
-        userId: session?.user.id,
+        userId: session.user.id,
       });
-      console.log("Purchase successful");
+
+      console.log("Purchase successful", response.data);
+
+      // Refresh the wallet balance after purchase
+      await refreshBalance();
+
       handleCloseConfirm();
     } catch (error) {
-      console.error(error);
+      console.error("Purchase error:", error);
+      if (axios.isAxiosError(error) && error.response) {
+        setPurchaseError(
+          error.response.data.message || "Failed to complete purchase"
+        );
+      } else {
+        setPurchaseError("An unexpected error occurred");
+      }
+    } finally {
+      setIsPurchasing(false);
     }
   };
 
@@ -51,7 +96,7 @@ export const SkinCard = ({ listing }: SkinCardProps) => {
       {/* ItemDetails Modal */}
       {dialogOpen && (
         <ItemDetails
-          onBuy={handleOpenConfirm} // Шийдэх modal руу шилжинэ
+          onBuy={handleOpenConfirm}
           image={listing.skin.imageUrl}
           price={listing.price}
           name={listing.skin.skinname}
@@ -59,18 +104,22 @@ export const SkinCard = ({ listing }: SkinCardProps) => {
         />
       )}
 
-      {/* ConfirmationModal - хамгийн урд харагдана */}
+      {/* ConfirmationModal - shown on top */}
       {confirmOpen && (
         <ConfirmationModal
           onConfirm={handleBuy}
           onCancel={handleCloseConfirm}
+          isLoading={isPurchasing}
+          error={purchaseError}
+          price={listing.price}
+          balance={balance}
         />
       )}
 
       <div className="bg-[#2b2b3b] rounded w-full">
         <div className="flex flex-col items-center justify-center">
           <Image
-            src={listing.skin.imageUrl}
+            src={listing.skin.imageUrl || "/placeholder.svg"}
             alt=""
             width={187}
             height={128}
@@ -107,36 +156,80 @@ export const SkinCard = ({ listing }: SkinCardProps) => {
   );
 };
 
-// Шийдэх modal
+// Confirmation modal with improved error handling and balance display
 const ConfirmationModal = ({
   onConfirm,
   onCancel,
+  isLoading,
+  error,
+  price,
+  balance,
 }: {
   onConfirm: () => void;
   onCancel: () => void;
+  isLoading?: boolean;
+  error?: string;
+  price: number;
+  balance: number;
 }) => {
+  const insufficientFunds = balance < price;
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-[#2b2b3b] p-6 rounded-xl shadow-lg text-center w-80">
-        <p className="text-[#e5e6e5] text-lg font-bold mb-4">Are you sure?</p>
+        <p className="text-[#e5e6e5] text-lg font-bold mb-4">
+          Confirm Purchase
+        </p>
+
+        <div className="mb-4">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-[#c4c4d4]">Price:</span>
+            <span className="text-[#e5e6e5] font-bold">
+              {formatCurrency(price)}
+            </span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-[#c4c4d4]">Your balance:</span>
+            <span
+              className={`font-bold ${
+                insufficientFunds ? "text-[#e92a61]" : "text-[#4fd25c]"
+              }`}
+            >
+              {formatCurrency(balance)}
+            </span>
+          </div>
+        </div>
+
+        {error && (
+          <div className="bg-[#3a2a2e] border border-[#e92a61] text-[#e92a61] p-3 rounded-lg mb-4 text-sm">
+            {error}
+          </div>
+        )}
+
         <div className="flex justify-center gap-6">
           <button
             onClick={onConfirm}
-            className="bg-[#e92a61] text-white px-6 py-2 rounded-lg text-sm font-semibold shadow-md 
-                      hover:bg-[#c81e50] transition duration-300 transform hover:scale-105"
+            disabled={isLoading || insufficientFunds}
+            className={`${
+              insufficientFunds
+                ? "bg-gray-600 cursor-not-allowed"
+                : "bg-[#e92a61] hover:bg-[#c81e50] transform hover:scale-105"
+            } text-white px-6 py-2 rounded-lg text-sm font-semibold shadow-md 
+            transition duration-300 disabled:opacity-70`}
           >
-            Yes, Buy
+            {isLoading ? "Processing..." : "Yes, Buy"}
           </button>
           <button
             onClick={onCancel}
+            disabled={isLoading}
             className="bg-gray-600 text-white px-6 py-2 rounded-lg text-sm font-semibold shadow-md 
-                      hover:bg-gray-500 transition duration-300 transform hover:scale-105"
+                      hover:bg-gray-500 transition duration-300 transform hover:scale-105
+                      disabled:opacity-70 disabled:transform-none"
           >
-            No, Cancel
+            Cancel
           </button>
         </div>
       </div>
     </div>
   );
 };
-
