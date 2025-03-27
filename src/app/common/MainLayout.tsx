@@ -1,5 +1,7 @@
 import { Header } from "./Header";
 
+
+
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
