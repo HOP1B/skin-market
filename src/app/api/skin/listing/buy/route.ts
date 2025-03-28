@@ -49,22 +49,25 @@ export const POST = async (req: NextRequest) => {
     where: { id: listingId },
   });
   // 3.2 dansnaas mongo hasagdah
-  await prisma.wallet.update({
+  const newBalance = wallet.balance - listing.price;
+
+ await prisma.wallet.update({
     where: { id: wallet.id },
     data: {
-      balance: wallet.balance - listing.price,
+      balance: newBalance,
     },
   });
+ 
 
   // 3.3. skiniig zarj bui hunii dansruu mongo ni oroh
   let sellerWallet = await prisma.wallet.findFirst({
-    where: { userId },
+    where: { userId: listing.userId },
   });
 
   if (!sellerWallet) {
     sellerWallet = await prisma.wallet.create({
       data: {
-        userId,
+        userId: listing.userId,
         balance: listing.price,
       },
     });
@@ -73,13 +76,14 @@ export const POST = async (req: NextRequest) => {
   }
 
   sellerWallet = await prisma.wallet.update({
-    where: { id: wallet.id },
+    where: { id: sellerWallet.id },
     data: {
       balance: {
         increment: listing.price,
       },
     },
   });
+
 
   return NextResponse.json(userSkin, { status: 200 });
 };

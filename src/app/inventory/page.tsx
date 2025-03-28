@@ -52,13 +52,10 @@ const App = () => {
               ))}
             </div>
           ) : (
-            <div>
+            <div className="grid grid-cols-6 gap-4">
               {userskin.length > 0 ? (
                 userskin.map((userskin, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
-                  >
+                  <div key={index}>
                     <InventorySkinCard userskin={userskin} key={index} />
                   </div>
                 ))

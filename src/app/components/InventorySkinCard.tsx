@@ -10,7 +10,7 @@ export const InventorySkinCard = ({ userskin }: SkinCardProps) => {
   return (
     <div>
       <div className="bg-[#2b2b3b] rounded w-full">
-        <div className="flex flex-col items-center justify-center ">
+        <div className="flex items-center justify-center ">
           <Image
             src={userskin?.skin.imageUrl}
             alt=""

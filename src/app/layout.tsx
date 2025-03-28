@@ -7,6 +7,7 @@ import {
 } from "@clerk/nextjs";
 import "./globals.css";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import { Play } from "next/font/google";
 
 const play = Play({
@@ -32,9 +33,25 @@ export default function RootLayout({
       <html lang="en" className={play.className}>
         <body className="h-[calc(60vh)] bg-gray-800">
           <SignedOut>
-            <SignInButton>
-              <Button>Nevtreh</Button>
-            </SignInButton>
+            <div className="min-h-screen w-full flex justify-center items-center relative">
+              <Image
+                src={"/backgr.jpg"}
+                alt="background"
+                fill
+                className="absolute w-full h-full object-cover "
+              />
+              <div className="px-20 py-10 relative bg-gray-700 rounded-md bg-clip-padding backdrop-filter backdrop-blur-none bg-opacity-70 border border-gray-100">
+                <h1 className="text-4xl sm:text-5xl font-extrabold text-[#4fd25c] mb-6">
+                  Тавтай морил
+                </h1>
+
+                <SignInButton>
+                  <Button className="w-full px-10 py-6 text-lg font-semibold text-white transition duration-300 ease-in-out transform  rounded-lg shadow-lg hover:scale-105 hover:text-[#4fd25c] ">
+                    Нэвтрэх
+                  </Button>
+                </SignInButton>
+              </div>
+            </div>
           </SignedOut>
           <SignedIn>{children}</SignedIn>
         </body>
@@ -42,5 +59,3 @@ export default function RootLayout({
     </ClerkProvider>
   );
 }
-
-// __Play_976028", "__Play_Fallback_976028

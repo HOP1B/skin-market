@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import axios from "axios";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -158,12 +158,17 @@ export function AddSkinDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="default">Add Skin</Button>
+        <Button
+          variant="outline"
+          className="bg-[#303030] border-[#4fd25c]/30 hover:bg-[#404040] hover:border-[#4fd25c]/50 text-[#4fd25c]"
+        >
+          <Plus className="mr-2 h-4 w-4" /> Add Skin
+        </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-[#1d1f20] border-[#4fd25c]/30">
         <DialogHeader>
-          <DialogTitle>Add New Skin</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-white">Add New Skin</DialogTitle>
+          <DialogDescription className="text-gray-400">
             Enter the details for the new skin you want to add.
           </DialogDescription>
         </DialogHeader>
@@ -174,7 +179,7 @@ export function AddSkinDialog() {
               name="skinId"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Skin</FormLabel>
+                  <FormLabel className="text-gray-300 ">Skin</FormLabel>
                   <Popover open={openCombobox} onOpenChange={setOpenCombobox}>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -183,7 +188,7 @@ export function AddSkinDialog() {
                           role="combobox"
                           aria-expanded={openCombobox}
                           className={cn(
-                            "w-full justify-between",
+                            "w-full justify-between bg-[#252728] border-[#4fd25c]/20 hover:border-[#4fd25c]/40",
                             !field.value && "text-muted-foreground"
                           )}
                           onClick={() => fetchSkins()}
@@ -196,14 +201,17 @@ export function AddSkinDialog() {
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[300px] p-0">
-                      <Command>
-                        <CommandInput placeholder="Search skins..." />
+                    <PopoverContent className="w-[300px] p-0 bg-[#252728] border-[#4fd25c]/20 max-h-60 overflow-y-auto">
+                      <Command className="bg-transparent">
+                        <CommandInput
+                          placeholder="Search skins..."
+                          className="border-b-[#4fd25c]/20"
+                        />
                         <CommandList>
                           <CommandEmpty>
                             {loading ? "Loading..." : "No skin found."}
                           </CommandEmpty>
-                          <CommandGroup>
+                          <CommandGroup className="">
                             {skins.map((skin) => (
                               <CommandItem
                                 key={skin.id}
@@ -212,10 +220,11 @@ export function AddSkinDialog() {
                                   form.setValue("skinId", skin.id);
                                   setOpenCombobox(false);
                                 }}
+                                className="hover:bg-[#4fd25c]/10"
                               >
                                 <Check
                                   className={cn(
-                                    "mr-2 h-4 w-4",
+                                    "mr-2 h-4 w-4 text-[#4fd25c]",
                                     skin.id === field.value
                                       ? "opacity-100"
                                       : "opacity-0"
@@ -229,7 +238,7 @@ export function AddSkinDialog() {
                       </Command>
                     </PopoverContent>
                   </Popover>
-                  <FormMessage />
+                  <FormMessage className="text-red-400" />
                 </FormItem>
               )}
             />
@@ -238,11 +247,12 @@ export function AddSkinDialog() {
               name="price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Price</FormLabel>
+                  <FormLabel className="text-gray-300">Price</FormLabel>
                   <FormControl>
                     <Input
                       type="text"
                       placeholder="Enter price"
+                      className="bg-[#252728] border-[#4fd25c]/20 focus:border-[#4fd25c]/50 focus:ring-[#4fd25c]/10"
                       {...field}
                       value={
                         field.value !== undefined
@@ -271,7 +281,7 @@ export function AddSkinDialog() {
                       }}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-400" />
                 </FormItem>
               )}
             />
@@ -280,30 +290,39 @@ export function AddSkinDialog() {
               name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Status</FormLabel>
+                  <FormLabel className="text-gray-300">Status</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-[#252728] border-[#4fd25c]/20 focus:ring-[#4fd25c]/10">
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent className="bg-[#252728] border-[#4fd25c]/20">
                       {skinStatusOptions.map((status) => (
-                        <SelectItem key={status} value={status}>
+                        <SelectItem
+                          key={status}
+                          value={status}
+                          className="hover:bg-[#4fd25c]/10 focus:bg-[#4fd25c]/10"
+                        >
                           {status.replace(/_/g, " ")}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
+                  <FormMessage className="text-red-400" />
                 </FormItem>
               )}
             />
             <DialogFooter>
-              <Button type="submit">Add Skin</Button>
+              <Button
+                type="submit"
+                className="bg-[#4fd25c] hover:bg-[#3fb24a] text-black font-medium"
+              >
+                Add Skin
+              </Button>
             </DialogFooter>
           </form>
         </Form>
