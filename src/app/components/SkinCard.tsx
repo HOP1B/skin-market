@@ -117,7 +117,7 @@ export const SkinCard = ({ listing, refreshSkinList }: SkinCardProps) => {
         />
       )}
 
-      <div className="bg-[#2b2b3b] rounded w-full">
+      <div className="bg-[#151c2e] rounded w-full">
         <div className="flex flex-col items-center justify-center">
           <Image
             src={listing.skin.imageUrl || "/placeholder.svg"}
@@ -136,7 +136,7 @@ export const SkinCard = ({ listing, refreshSkinList }: SkinCardProps) => {
             <p className="text-[#e5e6e5] text-sm font-bold">
               {listing.skin.skinname}
             </p>
-            <p className="text-[#e92a61] text-xs font-bold">
+            <p className="text-[#ff0000] text-xs font-bold">
               -{discountPercentage}%
             </p>
           </div>
@@ -148,9 +148,7 @@ export const SkinCard = ({ listing, refreshSkinList }: SkinCardProps) => {
               {formatCurrency(highPrice)}
             </p>
           </div>
-          <div className="text-[#c4c4d4] text-xs">
-            {listing.status}
-          </div>
+          <div className="text-[#c4c4d4] text-xs">{listing.status}</div>
         </div>
       </div>
     </div>
