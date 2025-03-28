@@ -6,7 +6,7 @@
     "commit": "cz",
     "commit-all": "git add . && cz",
     "dev": "next dev --turbopack",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "prepare": "husky"
