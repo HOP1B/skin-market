@@ -31,7 +31,7 @@ export default function RootLayout({
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
     >
       <html lang="en" className={play.className}>
-        <body className="h-[calc(60vh)] bg-gray-800">
+        <body className="h-[calc(60vh)] bg-[#080c18]">
           <SignedOut>
             <div className="min-h-screen w-full flex justify-center items-center relative">
               <Image
