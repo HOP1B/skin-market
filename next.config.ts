@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  env: {
+    env: process.env.DATABASE_URL!,
+  },
 };
 
 export default nextConfig;
