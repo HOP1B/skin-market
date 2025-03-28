@@ -35,18 +35,18 @@ export default function RootLayout({
           <SignedOut>
             <div className="min-h-screen w-full flex justify-center items-center relative">
               <Image
-                src={"/BG.jpg"}
+                src={"/backgr.jpg"}
                 alt="background"
                 fill
-                className="absolute w-full h-full object-cover"
+                className="absolute w-full h-full object-cover "
               />
               <div className="px-20 py-10 relative bg-gray-700 rounded-md bg-clip-padding backdrop-filter backdrop-blur-none bg-opacity-70 border border-gray-100">
-                <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-600 drop-shadow-lg mb-6">
+                <h1 className="text-4xl sm:text-5xl font-extrabold text-[#4fd25c] mb-6">
                   Тавтай морил
                 </h1>
 
                 <SignInButton>
-                  <Button className="w-[150px] px-10 py-6 text-lg font-semibold text-white transition duration-300 ease-in-out transform bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow-lg hover:scale-105 hover:from-purple-500 hover:to-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                  <Button className="w-full px-10 py-6 text-lg font-semibold text-white transition duration-300 ease-in-out transform  rounded-lg shadow-lg hover:scale-105 hover:text-[#4fd25c] ">
                     Нэвтрэх
                   </Button>
                 </SignInButton>
@@ -59,5 +59,3 @@ export default function RootLayout({
     </ClerkProvider>
   );
 }
-
-// __Play_976028", "__Play_Fallback_976028

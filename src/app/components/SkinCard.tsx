@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import Image from "next/image";
 import { useSession } from "@clerk/nextjs";
 import { formatCurrency } from "@/lib/format-currency";
 import { formatItem } from "@/lib/format-item";
-import { formatStatus } from "@/lib/format-status";
 import { getRandomDiscount } from "@/lib/get-random-discount";
 import ItemDetails from "./itemDetail";
 import type { Listing } from "./types";
@@ -150,7 +149,7 @@ export const SkinCard = ({ listing, refreshSkinList }: SkinCardProps) => {
             </p>
           </div>
           <div className="text-[#c4c4d4] text-xs">
-            {formatStatus(listing.status)}
+            {listing.status}
           </div>
         </div>
       </div>
